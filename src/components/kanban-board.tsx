@@ -187,8 +187,9 @@ export default function KanbanBoard() {
               items={columnsId}
               strategy={verticalListSortingStrategy}
             >
-              {columns.map((column) => (
+              {columns.map((column, index) => (
                 <ColumnContainer
+                  index={index}
                   key={column.id}
                   column={column}
                   deleteColumn={deleteColumn}
@@ -206,6 +207,7 @@ export default function KanbanBoard() {
                 <DragOverlay>
                   {activeColumn ? (
                     <ColumnContainer
+                      index={columns.indexOf(activeColumn)}
                       column={activeColumn}
                       deleteColumn={deleteColumn}
                       updateColumn={updateColumn}
