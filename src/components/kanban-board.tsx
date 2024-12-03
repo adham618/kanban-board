@@ -25,6 +25,9 @@ import { createPortal } from "react-dom";
 import useLocalStorageState from "use-local-storage-state";
 
 export default function KanbanBoard() {
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
+
   const [columns, setColumns] = useLocalStorageState<Column[]>("columns", {
     defaultValue: [],
   });
@@ -198,31 +201,33 @@ export default function KanbanBoard() {
               ))}
             </SortableContext>
           </div>
-          {createPortal(
-            <DragOverlay>
-              {activeColumn ? (
-                <ColumnContainer
-                  column={activeColumn}
-                  deleteColumn={deleteColumn}
-                  updateColumn={updateColumn}
-                  createTask={createTask}
-                  tasks={tasks.filter(
-                    (task) => task.columnId === activeColumn.id
-                  )}
-                  deleteTask={deleteTask}
-                  updateTask={updateTask}
-                />
-              ) : null}
-              {activeTask ? (
-                <TaskCard
-                  task={activeTask}
-                  deleteTask={deleteTask}
-                  updateTask={updateTask}
-                />
-              ) : null}
-            </DragOverlay>,
-            document.body
-          )}
+          {mounted
+            ? createPortal(
+                <DragOverlay>
+                  {activeColumn ? (
+                    <ColumnContainer
+                      column={activeColumn}
+                      deleteColumn={deleteColumn}
+                      updateColumn={updateColumn}
+                      createTask={createTask}
+                      tasks={tasks.filter(
+                        (task) => task.columnId === activeColumn.id
+                      )}
+                      deleteTask={deleteTask}
+                      updateTask={updateTask}
+                    />
+                  ) : null}
+                  {activeTask ? (
+                    <TaskCard
+                      task={activeTask}
+                      deleteTask={deleteTask}
+                      updateTask={updateTask}
+                    />
+                  ) : null}
+                </DragOverlay>,
+                document.body
+              )
+            : null}
         </DndContext>
       </div>
     </div>
