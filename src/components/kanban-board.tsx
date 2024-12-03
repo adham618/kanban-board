@@ -161,7 +161,7 @@ export default function KanbanBoard() {
   };
 
   return (
-    <div className="w-full py-10 min-h-screen">
+    <div className="w-full py-10 flex flex-col min-h-screen">
       <div className="px-6 flex items-center justify-center">
         <Button onClick={createColumn} className="w-56 py-5">
           <PlusCircleIcon />
@@ -169,7 +169,7 @@ export default function KanbanBoard() {
         </Button>
       </div>
 
-      <div className="mt-10 p-6 flex  overflow-x-auto w-full">
+      <div className="mt-10 p-6 flex flex-grow overflow-x-auto w-full">
         <DndContext
           sensors={sensors}
           onDragStart={onDragStart}
@@ -177,6 +177,9 @@ export default function KanbanBoard() {
           onDragOver={onDragOver}
         >
           <div className="flex gap-6 items-center mx-auto justify-center">
+            {columns.length === 0 && (
+              <p className="text-base text-gray-400">No columns added yet.</p>
+            )}
             <SortableContext
               items={columnsId}
               strategy={verticalListSortingStrategy}

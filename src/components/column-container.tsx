@@ -96,6 +96,11 @@ export default function ColumnContainer({
         </button>
       </div>
       <div className="flex p-2 flex-col gap-2 overflow-x-hidden overflow-y-auto flex-grow">
+        {tasks.length === 0 && (
+          <div className="flex flex-col gap-2 items-center justify-center flex-grow">
+            <p className="text-sm text-gray-400">No tasks added yet.</p>
+          </div>
+        )}
         <SortableContext items={tasksId}>
           {tasks.map((task) => (
             <TaskCard
