@@ -135,31 +135,45 @@ export default function KanbanBoard() {
     if (activeId === overId) return;
     const isActiveTask = active.data.current?.type === "Task";
     const isOverTask = over.data.current?.type === "Task";
-    if (!isActiveTask) return;
+    const isOverColumn = over.data.current?.type === "Column";
 
-    // If dropping a task over another task
-    if (isActiveTask && isOverTask) {
-      setTasks((prevTasks) => {
-        const activeTaskIndex = prevTasks.findIndex(
-          (task) => task.id === activeId
-        );
-        const overTaskIndex = prevTasks.findIndex((task) => task.id === overId);
-        tasks[activeTaskIndex].columnId = tasks[overTaskIndex].columnId;
-        return arrayMove(prevTasks, activeTaskIndex, overTaskIndex);
-      });
+    if (isActiveTask) {
+      if (isOverTask) {
+        setTasks((prevTasks) => {
+          const activeTaskIndex = prevTasks.findIndex(
+            (task) => task.id === activeId
+          );
+          const overTaskIndex = prevTasks.findIndex(
+            (task) => task.id === overId
+          );
+          tasks[activeTaskIndex].columnId = tasks[overTaskIndex].columnId;
+          return arrayMove(prevTasks, activeTaskIndex, overTaskIndex);
+        });
+      }
+
+      if (isOverColumn) {
+        setTasks((prevTasks) => {
+          const activeTaskIndex = prevTasks.findIndex(
+            (task) => task.id === activeId
+          );
+          tasks[activeTaskIndex].columnId = overId;
+          return arrayMove(prevTasks, activeTaskIndex, activeTaskIndex);
+        });
+      }
     }
 
-    const isOverColumn = over.data.current?.type === "Column";
-    // If droppinf a task over a another column
-
-    if (isActiveTask && isOverColumn) {
-      setTasks((prevTasks) => {
-        const activeTaskIndex = prevTasks.findIndex(
-          (task) => task.id === activeId
+    if (active.data.current?.type === "Column" && isOverColumn) {
+      const activeColumnIndex = columns.findIndex(
+        (column) => column.id === activeId
+      );
+      const overColumnIndex = columns.findIndex(
+        (column) => column.id === overId
+      );
+      if (activeColumnIndex !== overColumnIndex) {
+        setColumns((prevColumns) =>
+          arrayMove(prevColumns, activeColumnIndex, overColumnIndex)
         );
-        tasks[activeTaskIndex].columnId = overId;
-        return arrayMove(prevTasks, activeTaskIndex, activeTaskIndex);
-      });
+      }
     }
   };
 
