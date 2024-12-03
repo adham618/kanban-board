@@ -16,6 +16,12 @@ export default function KanbanBoard() {
     ]);
   };
 
+  const deleteColumn = (id: string | number) => {
+    setColumns((prevColumns) =>
+      prevColumns.filter((column) => column.id !== id)
+    );
+  };
+
   return (
     <div className="w-full py-10 min-h-screen">
       <div className="px-6 flex items-center justify-center">
@@ -28,7 +34,11 @@ export default function KanbanBoard() {
       <div className="mt-10 p-6 flex  overflow-x-auto w-full">
         <div className="flex gap-6 items-center mx-auto justify-center">
           {columns.map((column) => (
-            <ColumnContainer key={column.id} column={column} />
+            <ColumnContainer
+              key={column.id}
+              column={column}
+              deleteColumn={deleteColumn}
+            />
           ))}
         </div>
       </div>
