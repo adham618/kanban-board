@@ -2,7 +2,7 @@
 
 import ColumnContainer from "@/components/column-container";
 import { Button } from "@/components/ui/button";
-import { Column } from "@/types";
+import { Column, Task } from "@/types";
 import {
   DndContext,
   DragEndEvent,
@@ -24,6 +24,8 @@ import { createPortal } from "react-dom";
 export default function KanbanBoard() {
   const [columns, setColumns] = React.useState<Column[]>([]);
   const [activeColumn, setActiveColumn] = React.useState<Column | null>(null);
+
+  const [tasks, setTasks] = React.useState<Task[]>([]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -86,6 +88,24 @@ export default function KanbanBoard() {
     setActiveColumn(null);
   };
 
+  // tasks
+  const createTask = (columnId: string | number) => {
+    setTasks((prevTasks) => [
+      ...prevTasks,
+      { id: Date.now(), content: `Task ${prevTasks.length + 1}`, columnId },
+    ]);
+  };
+
+  const deleteTask = (id: string | number) => {
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
+  };
+
+  const updateTask = (id: string | number, content: string) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) => (task.id === id ? { ...task, content } : task))
+    );
+  };
+
   return (
     <div className="w-full py-10 min-h-screen">
       <div className="px-6 flex items-center justify-center">
@@ -112,6 +132,10 @@ export default function KanbanBoard() {
                   column={column}
                   deleteColumn={deleteColumn}
                   updateColumn={updateColumn}
+                  createTask={createTask}
+                  tasks={tasks.filter((task) => task.columnId === column.id)}
+                  deleteTask={deleteTask}
+                  updateTask={updateTask}
                 />
               ))}
             </SortableContext>
@@ -123,6 +147,12 @@ export default function KanbanBoard() {
                   column={activeColumn}
                   deleteColumn={deleteColumn}
                   updateColumn={updateColumn}
+                  createTask={createTask}
+                  tasks={tasks.filter(
+                    (task) => task.columnId === activeColumn.id
+                  )}
+                  deleteTask={deleteTask}
+                  updateTask={updateTask}
                 />
               ) : null}
             </DragOverlay>,

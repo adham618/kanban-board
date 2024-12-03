@@ -1,19 +1,28 @@
 "use client";
 
-import { Column } from "@/types";
+import TaskCard from "@/components/task-card";
+import { Column, Task } from "@/types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Trash } from "lucide-react";
+import { PlusIcon, Trash2Icon } from "lucide-react";
 import * as React from "react";
 
 export default function ColumnContainer({
   column,
   deleteColumn,
   updateColumn,
+  createTask,
+  tasks,
+  deleteTask,
+  updateTask,
 }: {
   column: Column;
   deleteColumn: (id: string | number) => void;
   updateColumn: (id: string | number, title: string) => void;
+  createTask: (columnId: string | number) => void;
+  tasks: Task[];
+  deleteTask: (id: string | number) => void;
+  updateTask: (id: string | number, content: string) => void;
 }) {
   const [editMode, setEditMode] = React.useState(false);
   const {
@@ -48,13 +57,13 @@ export default function ColumnContainer({
     <div
       ref={setNodeRef}
       style={style}
-      onClick={() => setEditMode(true)}
       className="flex w-[300px] overflow-hidden h-[400px] flex-col rounded-md bg-primary shadow flex-shrink-0"
     >
       <div
         {...attributes}
         {...listeners}
         className="text-base p-3 border-4 border-columnBackground cursor-grab bg-mainBackground justify-between flex items-center gap-2 font-semibold"
+        onClick={() => setEditMode(true)}
       >
         <div className="flex items-center gap-2">
           <div className="rounded-full px-2 py-1  text-sm bg-columnBackground">
@@ -82,11 +91,27 @@ export default function ColumnContainer({
           onClick={() => deleteColumn(column.id)}
           className="rounded-full p-2 text-gray-400 hover:text-white hover:bg-columnBackground"
         >
-          <Trash className="size-4 " />
+          <Trash2Icon className="size-4" />
         </button>
       </div>
-      <div className="flex p-3 flex-grow">contwnt</div>
-      <div className="p-3 ">footer</div>
+      <div className="flex p-2 flex-col gap-2 overflow-x-hidden overflow-y-auto flex-grow">
+        {tasks.map((task) => (
+          <TaskCard
+            key={task.id}
+            task={task}
+            deleteTask={deleteTask}
+            updateTask={updateTask}
+          />
+        ))}
+      </div>
+      <button
+        type="button"
+        className="p-4 flex items-center gap-2 border-columnBackground border-2 rounded-md active:bg-black hover:bg-mainBackground"
+        onClick={() => createTask(column.id)}
+      >
+        <PlusIcon />
+        Add task
+      </button>
     </div>
   );
 }
