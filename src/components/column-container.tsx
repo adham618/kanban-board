@@ -4,14 +4,18 @@ import { Column } from "@/types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Trash } from "lucide-react";
+import * as React from "react";
 
 export default function ColumnContainer({
   column,
   deleteColumn,
+  updateColumn,
 }: {
   column: Column;
   deleteColumn: (id: string | number) => void;
+  updateColumn: (id: string | number, title: string) => void;
 }) {
+  const [editMode, setEditMode] = React.useState(false);
   const {
     setNodeRef,
     transform,
@@ -22,6 +26,7 @@ export default function ColumnContainer({
   } = useSortable({
     id: column.id,
     data: { type: "Column", column },
+    disabled: editMode,
   });
 
   const style = {
@@ -43,6 +48,7 @@ export default function ColumnContainer({
     <div
       ref={setNodeRef}
       style={style}
+      onClick={() => setEditMode(true)}
       className="flex w-[300px] overflow-hidden h-[400px] flex-col rounded-md bg-primary shadow flex-shrink-0"
     >
       <div
@@ -54,7 +60,23 @@ export default function ColumnContainer({
           <div className="rounded-full px-2 py-1  text-sm bg-columnBackground">
             0
           </div>
-          {column.title}
+          {!editMode && (
+            <h2 className="text-sm font-semibold">{column.title}</h2>
+          )}
+          {editMode && (
+            <input
+              autoFocus
+              onBlur={() => setEditMode(false)}
+              onKeyDown={(e) => {
+                if (e.key !== "Enter") return;
+                setEditMode(false);
+              }}
+              type="text"
+              className="text-sm font-semibold bg-black border rounded outline-none px-2 py-1 focus:border-rose-500"
+              value={column.title}
+              onChange={(e) => updateColumn(column.id, e.target.value)}
+            />
+          )}
         </div>
         <button
           onClick={() => deleteColumn(column.id)}

@@ -45,6 +45,15 @@ export default function KanbanBoard() {
       prevColumns.filter((column) => column.id !== id)
     );
   };
+
+  const updateColumn = (id: string | number, title: string) => {
+    setColumns((prevColumns) =>
+      prevColumns.map((column) =>
+        column.id === id ? { ...column, title } : column
+      )
+    );
+  };
+
   const columnsId = React.useMemo(
     () => columns.map((column) => column.id),
     [columns]
@@ -76,6 +85,7 @@ export default function KanbanBoard() {
     }
     setActiveColumn(null);
   };
+
   return (
     <div className="w-full py-10 min-h-screen">
       <div className="px-6 flex items-center justify-center">
@@ -101,6 +111,7 @@ export default function KanbanBoard() {
                   key={column.id}
                   column={column}
                   deleteColumn={deleteColumn}
+                  updateColumn={updateColumn}
                 />
               ))}
             </SortableContext>
@@ -111,6 +122,7 @@ export default function KanbanBoard() {
                 <ColumnContainer
                   column={activeColumn}
                   deleteColumn={deleteColumn}
+                  updateColumn={updateColumn}
                 />
               ) : null}
             </DragOverlay>,
