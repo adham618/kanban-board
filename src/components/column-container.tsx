@@ -2,7 +2,7 @@
 
 import TaskCard from "@/components/task-card";
 import { Column, Task } from "@/types";
-import { useSortable } from "@dnd-kit/sortable";
+import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { PlusIcon, Trash2Icon } from "lucide-react";
 import * as React from "react";
@@ -25,6 +25,7 @@ export default function ColumnContainer({
   updateTask: (id: string | number, content: string) => void;
 }) {
   const [editMode, setEditMode] = React.useState(false);
+  const tasksId = React.useMemo(() => tasks.map((task) => task.id), [tasks]);
   const {
     setNodeRef,
     transform,
@@ -95,14 +96,16 @@ export default function ColumnContainer({
         </button>
       </div>
       <div className="flex p-2 flex-col gap-2 overflow-x-hidden overflow-y-auto flex-grow">
-        {tasks.map((task) => (
-          <TaskCard
-            key={task.id}
-            task={task}
-            deleteTask={deleteTask}
-            updateTask={updateTask}
-          />
-        ))}
+        <SortableContext items={tasksId}>
+          {tasks.map((task) => (
+            <TaskCard
+              key={task.id}
+              task={task}
+              deleteTask={deleteTask}
+              updateTask={updateTask}
+            />
+          ))}
+        </SortableContext>
       </div>
       <button
         type="button"

@@ -25,8 +25,8 @@ export default function TaskCard({
     setNodeRef,
     transform,
     transition,
-    // attributes,
-    // listeners,
+    attributes,
+    listeners,
     isDragging,
   } = useSortable({
     id: task.id,
@@ -41,7 +41,13 @@ export default function TaskCard({
 
   if (editMode) {
     return (
-      <div className="bg-mainBackground p-2.5 h-[60px] min-h-[60px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-rose-500 cursor-grab relative">
+      <div
+        ref={setNodeRef}
+        style={style}
+        {...attributes}
+        {...listeners}
+        className="bg-mainBackground p-2.5 h-[60px] min-h-[60px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-rose-500 cursor-grab relative"
+      >
         <textarea
           className="h-[90%] w-full resize-none border-none rounded bg-transparent text-white focus:outline-none"
           value={task.content}
@@ -55,24 +61,28 @@ export default function TaskCard({
     );
   }
 
-  // if (isDragging) {
-  //   return (
-  //     <div
-  //       ref={setNodeRef}
-  //       style={style}
-  //       className="flex w-[300px] border-2 opacity-40 border-rose-400 overflow-hidden h-[400px] flex-col rounded-md bg-primary shadow flex-shrink-0"
-  //     ></div>
-  //   );
-  // }
+  if (isDragging) {
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        className="bg-mainBackground opacity-30 p-2.5 h-[60px] min-h-[60px] items-center flex text-left rounded-xl  cursor-grab border-2 border-rose-500 relative"
+      ></div>
+    );
+  }
 
   return (
     <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
       className="bg-mainBackground p-2.5 h-[60px] min-h-[60px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-rose-500 cursor-grab relative"
       onMouseEnter={() => setMouseIsOver(true)}
       onMouseLeave={() => setMouseIsOver(false)}
       onClick={toggleEditMode}
     >
-      <p className="my-auto flex items-center h-[90%] w-full overflow-auto whitespace-pre-wrap">
+      <p className="my-auto flex items-center h-[90%] w-full overflow-x-hidden overflow-y-auto whitespace-pre-wrap">
         {task.content}
       </p>
       {mouseIsOver && (
