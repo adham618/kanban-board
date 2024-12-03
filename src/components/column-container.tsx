@@ -68,7 +68,7 @@ export default function ColumnContainer({
       >
         <div className="flex items-center gap-2">
           <div className="rounded-full px-2 py-1  text-sm bg-columnBackground">
-            0
+            {column.id}
           </div>
           {!editMode && (
             <h2 className="text-sm font-semibold">{column.title}</h2>

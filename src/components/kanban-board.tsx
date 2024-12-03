@@ -46,7 +46,10 @@ export default function KanbanBoard() {
   const createColumn = () => {
     setColumns((prevColumns) => [
       ...prevColumns,
-      { id: Date.now(), title: "New Column " + (prevColumns.length + 1) },
+      {
+        id: prevColumns.length + 1,
+        title: "New Column " + (prevColumns.length + 1),
+      },
     ]);
   };
 
