@@ -15,8 +15,8 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import {
-  arrayMove,
   SortableContext,
+  arrayMove,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { PlusCircleIcon } from "lucide-react";
@@ -50,7 +50,7 @@ export default function KanbanBoard() {
     setColumns((prevColumns) => [
       ...prevColumns,
       {
-        id: prevColumns.length + 1,
+        id: Date.now(),
         title: "New Column " + (prevColumns.length + 1),
       },
     ]);
