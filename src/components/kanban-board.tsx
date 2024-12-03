@@ -17,15 +17,20 @@ export default function KanbanBoard() {
   };
 
   return (
-    <div className="m-auto py-10 flex flex-col items-center justify-center overflow-auto w-full  min-h-screen px-10">
-      <Button onClick={createColumn} className="w-56 py-5">
-        <PlusCircleIcon />
-        Add Column
-      </Button>
-      <div className="mt-10 flex gap-4">
-        {columns.map((column) => (
-          <ColumnContainer key={column.id} column={column} />
-        ))}
+    <div className="w-full py-10 min-h-screen">
+      <div className="px-6 flex items-center justify-center">
+        <Button onClick={createColumn} className="w-56 py-5">
+          <PlusCircleIcon />
+          Add Column
+        </Button>
+      </div>
+
+      <div className="mt-10 p-6 flex  overflow-x-auto w-full">
+        <div className="flex gap-6 items-center mx-auto justify-center">
+          {columns.map((column) => (
+            <ColumnContainer key={column.id} column={column} />
+          ))}
+        </div>
       </div>
     </div>
   );
