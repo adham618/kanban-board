@@ -3,11 +3,35 @@
 import ColumnContainer from "@/components/column-container";
 import { Button } from "@/components/ui/button";
 import { Column } from "@/types";
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { PlusCircleIcon } from "lucide-react";
 import * as React from "react";
+import { createPortal } from "react-dom";
 
 export default function KanbanBoard() {
   const [columns, setColumns] = React.useState<Column[]>([]);
+  const [activeColumn, setActiveColumn] = React.useState<Column | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 3,
+      },
+    })
+  );
 
   const createColumn = () => {
     setColumns((prevColumns) => [
@@ -21,7 +45,37 @@ export default function KanbanBoard() {
       prevColumns.filter((column) => column.id !== id)
     );
   };
+  const columnsId = React.useMemo(
+    () => columns.map((column) => column.id),
+    [columns]
+  );
 
+  const onDragStart = (event: DragStartEvent) => {
+    if (event.active.data.current?.type === "Column") {
+      setActiveColumn(event.active.data.current.column);
+    }
+    return;
+  };
+  const onDragEnd = (event: DragEndEvent) => {
+    const { over, active } = event;
+    if (!over) return;
+    const activeColumnId = active.id;
+    const overColumnId = over.id;
+    if (activeColumnId === overColumnId) return;
+    if (activeColumnId !== overColumnId) {
+      setColumns((prevColumns) => {
+        const activeColumnIndex = prevColumns.findIndex(
+          (column) => column.id === activeColumnId
+        );
+        const overColumnIndex = prevColumns.findIndex(
+          (column) => column.id === overColumnId
+        );
+
+        return arrayMove(prevColumns, activeColumnIndex, overColumnIndex);
+      });
+    }
+    setActiveColumn(null);
+  };
   return (
     <div className="w-full py-10 min-h-screen">
       <div className="px-6 flex items-center justify-center">
@@ -32,15 +86,37 @@ export default function KanbanBoard() {
       </div>
 
       <div className="mt-10 p-6 flex  overflow-x-auto w-full">
-        <div className="flex gap-6 items-center mx-auto justify-center">
-          {columns.map((column) => (
-            <ColumnContainer
-              key={column.id}
-              column={column}
-              deleteColumn={deleteColumn}
-            />
-          ))}
-        </div>
+        <DndContext
+          sensors={sensors}
+          onDragStart={onDragStart}
+          onDragEnd={onDragEnd}
+        >
+          <div className="flex gap-6 items-center mx-auto justify-center">
+            <SortableContext
+              items={columnsId}
+              strategy={verticalListSortingStrategy}
+            >
+              {columns.map((column) => (
+                <ColumnContainer
+                  key={column.id}
+                  column={column}
+                  deleteColumn={deleteColumn}
+                />
+              ))}
+            </SortableContext>
+          </div>
+          {createPortal(
+            <DragOverlay>
+              {activeColumn ? (
+                <ColumnContainer
+                  column={activeColumn}
+                  deleteColumn={deleteColumn}
+                />
+              ) : null}
+            </DragOverlay>,
+            document.body
+          )}
+        </DndContext>
       </div>
     </div>
   );
