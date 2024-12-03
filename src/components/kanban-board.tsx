@@ -22,13 +22,18 @@ import {
 import { PlusCircleIcon } from "lucide-react";
 import * as React from "react";
 import { createPortal } from "react-dom";
+import useLocalStorageState from "use-local-storage-state";
 
 export default function KanbanBoard() {
-  const [columns, setColumns] = React.useState<Column[]>([]);
+  const [columns, setColumns] = useLocalStorageState<Column[]>("columns", {
+    defaultValue: [],
+  });
   const [activeColumn, setActiveColumn] = React.useState<Column | null>(null);
   const [activeTask, setActiveTask] = React.useState<Task | null>(null);
 
-  const [tasks, setTasks] = React.useState<Task[]>([]);
+  const [tasks, setTasks] = useLocalStorageState<Task[]>("tasks", {
+    defaultValue: [],
+  });
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
